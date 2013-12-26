@@ -9,7 +9,7 @@ use Scalar::Util qw( refaddr );
 use Perl::Critic::Utils qw{ :severities :data_conversion :classification :ppi };
 use base 'Perl::Critic::Policy';
 
-our $VERSION = '1.116';
+our $VERSION = '1.121_01';
 
 #-----------------------------------------------------------------------------
 
