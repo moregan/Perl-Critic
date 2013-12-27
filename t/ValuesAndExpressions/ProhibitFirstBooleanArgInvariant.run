@@ -229,18 +229,27 @@ ok 'f r e l p' =~ /f r e l p/, "use re '/x' turns off when it drops out of scope
 ## failures 0
 ## cut
 
-ok( eval "1;", 'simple constant stringy eval' );
-ok( eval "$a", 'interpolated stringy eval' );
-ok( eval $a.$b, 'expression yielding stringy eval' );
-ok( eval(), 'stringy eval on $_' );
-ok( eval { $a }, 'block eval with variable' );
-ok( eval { Class->method() }, 'block eval with method call' );
+# stringy eval
+ok( eval $a );
+ok( eval "$a" );
+ok( eval $a.$b );
+ok( eval() );
+ok( eval );
+ok( eval, 'not an argument' );
+
+# block eval
+ok( eval { $a } );
+ok( eval { Class->method() } );
 
 #-----------------------------------------------------------------------------
 ## name eval violations
-## failures 1
+## failures 2
 ## cut
 
+# stringy eval
+ok( eval "1;" );
+
+# block eval
 ok( eval { 1; }, 'constant block eval' );
 
 #-----------------------------------------------------------------------------
@@ -256,25 +265,25 @@ ok( $a =~ y/a/b/ );
 ## failures 2
 ## cut
 
-ok( 'a' =~ tr/a/a/ );
-ok( 'a' =~ y/a/a/ );
+ok( 'a' =~ tr/a/b/ );
+ok( 'a' =~ y/a/b/ );
 
 #-----------------------------------------------------------------------------
 ## name grep
 ## failures 0
 ## cut
 
-ok( grep { $_ eq '' } ( $a, 2, 3 ), "constant grep" );
-ok( grep { /4/ } ( $a, 2, 3 ), "constant grep" );
+ok( grep { $_ eq '' } ( $a, 2, 3 ) );
+ok( grep { /4/ } ( $a, 2, 3 ) );
 
 #-----------------------------------------------------------------------------
 ## name grep violations
 ## failures 3
 ## cut
 
-ok( grep { 1; } ( 1, 2, 3 ), 'constant grep not using $_' );
-ok( grep { $_ eq '' } ( 1, 2, 3 ), "constant grep" );
-ok( grep { /4/ } ( 1, 2, 3 ), "constant grep" );
+ok( grep { 1; } ( 1, 2, 3 ) );
+ok( grep { $_ eq '' } ( 1, 2, 3 ) );
+ok( grep { /4/ } ( 1, 2, 3 ) );
 
 #-----------------------------------------------------------------------------
 ## name builtin join
@@ -287,23 +296,23 @@ ok( join( whatever(), (1, 2, 3) ) );
 
 #-----------------------------------------------------------------------------
 ## name builtin join violations
-## failures 5
+## failures 4
 ## cut
 
-ok( join, 'join with no args' );
-ok( join(), 'join with no args' );
-ok( join( '' ), 'join with only separator' );
-ok( join( '', () ), 'join with empty array' );
-ok( join( '', (1, 2, 3) ), 'join with const array' );
+ok( join( '' ) );
+ok( join( '', () ) );
+ok( join( '', (1, 2, 3) ) );
+ok( join( '', ( (1, 2, 3), 4, (5, 6) ) );
 
 #-----------------------------------------------------------------------------
 ## name builtin lc
 ## failures 0
 ## cut
 
-ok( lc )
-ok( lc() )
-ok( lc($a) )
+ok( lc($a) );
+ok( lc() );
+ok( lc );
+ok( lc, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin lc violations
@@ -317,9 +326,10 @@ ok( lc('') );
 ## failures 0
 ## cut
 
-ok( lcfirst );
-ok( lcfirst() );
 ok( lcfirst($a) );
+ok( lcfirst() );
+ok( lcfirst );
+ok( lcfirst, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin lcfirst violations
@@ -327,38 +337,6 @@ ok( lcfirst($a) );
 ## cut
 
 ok( lcfirst('') );
-
-#-----------------------------------------------------------------------------
-## name builtin uc
-## failures 0
-## cut
-
-ok( uc )
-ok( uc() )
-ok( uc($a) )
-
-#-----------------------------------------------------------------------------
-## name builtin uc violations
-## failures 1
-## cut
-
-ok( uc('') );
-
-#-----------------------------------------------------------------------------
-## name builtin ucfirst
-## failures 0
-## cut
-
-ok( ucfirst );
-ok( ucfirst() );
-ok( ucfirst($a) );
-
-#-----------------------------------------------------------------------------
-## name builtin ucfirst violations
-## failures 1
-## cut
-
-ok( ucfirst('') );
 
 #-----------------------------------------------------------------------------
 ## name builtin keys
@@ -389,207 +367,226 @@ ok( scalar @{ [ 1, 2, 3 ] } );
 ## failures 0
 ## cut
 
-ok( caller );
-ok( caller() );
 ok( caller(1) );
+ok( caller() );
+ok( caller );
+ok( caller, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin alarm
 ## failures 0
 ## cut
 
-ok( alarm($a), 'alarm with variable' );
-ok( alarm(), 'alarm with no args' );
-ok( alarm, 'alarm with no args or parens' );
+ok( alarm($a) );
+ok( alarm() );
+ok( alarm );
+ok( alarm, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin chomp
 ## failures 0
 ## cut
 
-ok( chomp($a), 'chomp with variable' );
-ok( chomp("$a"), 'chomp with interpolated variable' );
-ok( chomp(), 'chomp with no params' );
-ok( chomp, 'chomp with no parens' );
+ok( chomp($a) );
+ok( chomp("$a") );
+ok( chomp() );
+ok( chomp, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin chomp violations
 ## failures 1
 ## cut
 
-ok( chomp("a"), 'chomp with constant value' );
+ok( chomp("a") );
 
 #-----------------------------------------------------------------------------
 ## name builtin chop
 ## failures 0
 ## cut
 
-ok( chop($a), 'chop with variable' );
-ok( chop("$a"), 'chop with interpolated variable' );
-ok( chop( ($a, $b) ), 'chop with variables in array' );
-ok( chop(), 'chop with no params' );
-ok( chop, 'chop with no parens' );
+ok( chop($a) );
+ok( chop("$a") );
+ok( chop( ($a, $b) ) );
+ok( chop() );
+ok( chop );
+ok( chop, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin chop violations
 ## failures 2
 ## cut
 
-ok( chop("a"), 'chop with constant value' );
-ok( chop( ('a', 'b') ), 'chop with constant array' );
+ok( chop("a") );
+ok( chop( ('a', 'b') ) );
 
 #-----------------------------------------------------------------------------
 ## name builtin chr
 ## failures 0
 ## cut
 
-ok( chr($a), 'chr with variable' );
-ok( chr(), 'chr with no args' );
+ok( chr($a) );
+ok( chr() );
+ok( chr );
+ok( chr, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin chr violations
-## failures 3
+## failures 6
 ## cut
 
-ok( chr(10), 'chr with constant' );
-ok( chr(10+3), 'chr with constant expression' );
-ok( chr(pop (1, 2)), 'chr with pop from constant array' );
+ok( chr(10) );
+ok( chr(10+3) );
+ok( chr(@{[1, 2, 3]}[1]) );
+ok( chr(@{[1, 2, 3]}[-1]) );
+ok( chr(@{[1, 2, 3]}[0+1]) );
+ok( chr 10, $not_an_argument );
 
 #-----------------------------------------------------------------------------
 ## name builtin cos
 ## failures 0
 ## cut
 
-ok( cos($a), 'cos with variable' );
-ok( cos(), 'cos with no parms' );
+ok( cos($a) );
+ok( cos() );
+ok( cos );
+ok( cos, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin cos violations
 ## failures 1
 ## cut
 
-ok( cos(1), 'cos with const' );
+ok( cos(1) );
 
 #-----------------------------------------------------------------------------
 ## name builtin defined
 ## failures 0
 ## cut
 
-ok( defined($a), 'defined with variable' );
-ok( defined(), 'defined with no parms' );
+ok( defined($a) );
+ok( defined() );
+ok( defined );
+ok( defined, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin defined violations
 ## failures 2
 ## cut
 
-ok( defined(1), 'defined with const' );
-ok( defined(undef), 'defined with undef' );
+ok( defined(1) );
+ok( defined(undef) );
 
 #-----------------------------------------------------------------------------
 ## name builtin exp
 ## failures 0
 ## cut
 
-ok( exp($a), 'exp with no parameters' );
-ok( exp(), 'exp with no parameters' );
-ok( exp, 'exp with no parameters' );
+ok( exp($a) );
+ok( exp() );
+ok( exp );
+ok( exp, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin exp violations
 ## failures 1
 ## cut
 
-ok( exp(2), 'exp with constant' );
+ok( exp(2) );
 
 #-----------------------------------------------------------------------------
 ## name builtin hex
 ## failures 0
 ## cut
 
-ok( hex($a), 'hex with no parameters' );
-ok( hex(), 'hex with no parameters' );
-ok( hex, 'hex with no parameters' );
+ok( hex($a) );
+ok( hex() );
+ok( hex );
+ok( hex, 'not an argument' );
 #
 #-----------------------------------------------------------------------------
 ## name builtin hex violations
 ## failures 1
 ## cut
 
-ok( hex('0xa'), 'hex with constant' );
+ok( hex('0xa') );
 
 #-----------------------------------------------------------------------------
 ## name builtin int
 ## failures 0
 ## cut
 
-ok( int($a), 'int with no parameters' );
-ok( int(), 'int with no parameters' );
-ok( int, 'int with no parameters' );
+ok( int($a) );
+ok( int() );
+ok( int );
+ok( int, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin int violations
 ## failures 1
 ## cut
 
-ok( int(1.2), 'int with constant' );
+ok( int(1.2) );
 
 #-----------------------------------------------------------------------------
 ## name builtin length
 ## failures 0
 ## cut
 
-ok( length($a), 'length on variable' );
-ok( length(), 'length on nothing' );
-ok( length, 'length with nothing and no parens' );
+ok( length($a) );
+ok( length() );
+ok( length );
+ok( length, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin length violations
 ## failures 1
 ## cut
 
-ok( length("a"), 'length on constant' );
+ok( length("a") );
 
 #-----------------------------------------------------------------------------
 ## name builtin log
 ## failures 0
 ## cut
 
-ok( log($a), 'log on variable' );
-ok( log(), 'log on nothing' );
-ok( log, 'literal that is not an argument to log' );
+ok( log($a) );
+ok( log() );
+ok( log );
+ok( log, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin log violations
 ## failures 1
 ## cut
 #
-ok( log(2), 'log on constant' );
+ok( log(2) );
 
 #-----------------------------------------------------------------------------
 ## name builtin oct
 ## failures 0
 ## cut
 
-ok( oct($a), 'oct on variable' );
-ok( oct(), 'oct on nothing' );
-ok( oct, 'oct with nothing and no parens' );
+ok( oct($a) );
+ok( oct() );
+ok( oct );
+ok( oct, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin oct violations
 ## failures 1
 ## cut
 
-ok( oct('077'), 'oct on constant' );
+ok( oct('077') );
 
 #-----------------------------------------------------------------------------
 ## name builtin ord
 ## failures 0
 ## cut
 
-ok( ord($a), 'ord with const arg' );
-ok( ord(), 'ord with no arg' );
-ok( ord, 'ord no args and no parens' );
+ok( ord($a) );
+ok( ord() );
+ok( ord );
+ok( ord, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin ord violations
@@ -603,8 +600,12 @@ ok( ord("a") );
 ## failures 0
 ## cut
 
-ok( pos($a), 'pos with variable' );
-ok( pos(), 'pos with no parms' );
+# pos always uses a variable, so we can't detect invariant uses of it.
+
+ok( pos($a) );
+ok( pos() );
+ok( pos );
+ok( pos, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin prototype
@@ -634,47 +635,58 @@ ok( qr/asdf/, $x, 'qr with extra arg' );
 ## failures 0
 ## cut
 
-ok( quotemeta($a), 'quotemeta with variable' );
-ok( quotemeta(), 'quotemeta with no parms' );
-ok( quotemeta, 'quotemeta with no args and no parens' );
+ok( quotemeta($a) );
+ok( quotemeta( );
+ok( quotemeta );
+ok( quotemeta, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin quotemeta violations
 ## failures 1
 ## cut
 
-ok( quotemeta('asdf'), 'quotemeta on constant' );
+ok( quotemeta('asdf') );
 
 #-----------------------------------------------------------------------------
 ## name builtin rand
 ## failures 0
 ## cut
 
-ok( rand(10), 'rand with const' );
-ok( rand(0), 'rand with 0' );
-ok( rand(), 'rand with no args' );
-ok( rand, 'rand with no args and no parens' );
+ok( rand(10) );
+ok( rand(0) );
+ok( rand() );
+ok( rand );
+ok( rand, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin reverse
 ## failures 0
 ## cut
 
-ok( reverse( $a, 2, 3 ), 'reverse with variables in list' );
-ok( reverse(@a), 'reverse of an array' );
+# list context
+ok( reverse($a, 2, 3) );
+ok( reverse(@a) );
+ok( reverse(%a) );
+
+# scalar context
 ok( scalar reverse(), 'reverse in scalar context with no arguments, so reverses on $_' );
+ok( scalar reverse, 'reverse in scalar context with no arguments, so reverses on $_' );
 
 #-----------------------------------------------------------------------------
 ## name builtin reverse violations
-## failures 6
+## failures 7
 ## cut
 
-ok( reverse( 1, 2, 3 ), 'reverse with constant list' );
-ok( reverse( () ), 'reverse with empty list' );
-ok( scalar reverse( (1, 2, 3) ), 'reverse in scalar context with constant list' );
-ok( scalar reverse( () ), 'reverse in scalar context with empty list' );
-ok( scalar reverse( "abc" ), 'reverse in scalar context with constant string' );
+#list context
+ok( reverse( 1, 2, 3 ) );
+ok( reverse( () ) );
 ok( reverse(), 'reverse in list context with no arguments, so no output' );
+ok( reverse, 'reverse in list context with no arguments, so no output' );
+
+# scalar context
+ok( scalar reverse( (1, 2, 3) ) );
+ok( scalar reverse( () ) );
+ok( scalar reverse( "abc" ), 'reverse in scalar context with constant string' );
 
 #-----------------------------------------------------------------------------
 ## name builtin shift
@@ -710,9 +722,10 @@ ok( sin(0) );
 ## failures 0
 ## cut
 
-ok( sqrt($a), 'sqrt on variable' );
-ok( sqrt(), 'sqrt on nothing' );
-ok( sqrt, 'sqrt with nothing and no parens' );
+ok( sqrt($a) );
+ok( sqrt() );
+ok( sqrt );
+ok( sqrt, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin sqrt violations
@@ -726,16 +739,18 @@ ok( sqrt(1) );
 ## failures 0
 ## cut
 
-ok( srand($a), 'srand on variable' );
-ok( srand(), 'srand on nothing' );
-ok( srand, 'srand with nothing and no parens' );
+ok( srand($a) );
+ok( srand() );
+ok( srand );
+ok( srand, 'not an argument' );
 
 #-----------------------------------------------------------------------------
 ## name builtin srand violations
-## failures 1
+## failures 2
 ## cut
 
-ok( srand(5.5), 'srand with constant' );
+ok( srand(5.5) );
+ok( srand 5.5 );
 
 #-----------------------------------------------------------------------------
 ## name builtin study violations
@@ -747,6 +762,40 @@ ok( study(), 'study with parens' );
 ok( study( $x ), 'study with var' );
 ok( study $x, 'study with var' );
 ok( study $x, $y, 'study w/ extra arg' );
+
+#-----------------------------------------------------------------------------
+## name builtin uc
+## failures 0
+## cut
+
+ok( uc($a) );
+ok( uc() );
+ok( uc );
+ok( uc, 'not an argument' );
+
+#-----------------------------------------------------------------------------
+## name builtin uc violations
+## failures 1
+## cut
+
+ok( uc('') );
+
+#-----------------------------------------------------------------------------
+## name builtin ucfirst
+## failures 0
+## cut
+
+ok( ucfirst($a) );
+ok( ucfirst() );
+ok( ucfirst );
+ok( ucfirst, 'not an argument' );
+
+#-----------------------------------------------------------------------------
+## name builtin ucfirst violations
+## failures 1
+## cut
+
+ok( ucfirst('') );
 
 #-----------------------------------------------------------------------------
 ## name builtin undef violations
