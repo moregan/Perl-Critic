@@ -438,8 +438,6 @@ sub element_is_invariant {
                 my @args = _parse_arg_list( $elem );
 
                 my $func = $elem->content();
-use Data::Dumper;
-print Dumper [ $func, \@args ];
 
                 # Special handling for stringy eval, which we currently
                 # consider to be variant, even though we could find some
