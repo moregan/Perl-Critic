@@ -268,14 +268,17 @@ ok( 'a' =~ y/a/a/ );
 ## failures 0
 ## cut
 
-ok( grep { 1; } ( 1, 2, 3 ), "constant grep" );
+ok( grep { $_ eq '' } ( $a, 2, 3 ), "constant grep" );
+ok( grep { /4/ } ( $a, 2, 3 ), "constant grep" );
 
 #-----------------------------------------------------------------------------
 ## name grep violations
-## failures 1
+## failures 3
 ## cut
 
-ok( grep { $_ eq '' } ( $a, 2, 3 ), "constant grep" );   # why is this supposed to be constant?
+ok( grep { 1; } ( 1, 2, 3 ), 'constant grep not using $_' );
+ok( grep { $_ eq '' } ( 1, 2, 3 ), "constant grep" );
+ok( grep { /4/ } ( 1, 2, 3 ), "constant grep" );
 
 #-----------------------------------------------------------------------------
 ## name builtin join
