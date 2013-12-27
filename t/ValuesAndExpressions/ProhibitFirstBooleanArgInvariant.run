@@ -414,7 +414,7 @@ ok( alarm, 'alarm with no args or parens' );
 ok( chomp($a), 'chomp with variable' );
 ok( chomp("$a"), 'chomp with interpolated variable' );
 ok( chomp(), 'chomp with no params' );
-#ok( chomp, 'chomp with no parens' );
+ok( chomp, 'chomp with no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin chomp violations
@@ -432,7 +432,7 @@ ok( chop($a), 'chop with variable' );
 ok( chop("$a"), 'chop with interpolated variable' );
 ok( chop( ($a, $b) ), 'chop with variables in array' );
 ok( chop(), 'chop with no params' );
-#ok( chop, 'chop with no parens' );
+ok( chop, 'chop with no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin chop violations
@@ -497,7 +497,7 @@ ok( defined(undef), 'defined with undef' );
 
 ok( exp($a), 'exp with no parameters' );
 ok( exp(), 'exp with no parameters' );
-#ok( exp, 'exp with no parameters' );
+ok( exp, 'exp with no parameters' );
 
 #-----------------------------------------------------------------------------
 ## name builtin exp violations
@@ -513,7 +513,7 @@ ok( exp(2), 'exp with constant' );
 
 ok( hex($a), 'hex with no parameters' );
 ok( hex(), 'hex with no parameters' );
-#ok( hex, 'hex with no parameters' );
+ok( hex, 'hex with no parameters' );
 #
 #-----------------------------------------------------------------------------
 ## name builtin hex violations
@@ -529,7 +529,7 @@ ok( hex('0xa'), 'hex with constant' );
 
 ok( int($a), 'int with no parameters' );
 ok( int(), 'int with no parameters' );
-#ok( int, 'int with no parameters' );
+ok( int, 'int with no parameters' );
 
 #-----------------------------------------------------------------------------
 ## name builtin int violations
@@ -545,7 +545,7 @@ ok( int(1.2), 'int with constant' );
 
 ok( length($a), 'length on variable' );
 ok( length(), 'length on nothing' );
-#ok( length, 'length with nothing and no parens' );
+ok( length, 'length with nothing and no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin length violations
@@ -561,7 +561,7 @@ ok( length("a"), 'length on constant' );
 
 ok( log($a), 'log on variable' );
 ok( log(), 'log on nothing' );
-#ok( log, 'literal that is not an argument to log' );
+ok( log, 'literal that is not an argument to log' );
 
 #-----------------------------------------------------------------------------
 ## name builtin log violations
@@ -577,7 +577,7 @@ ok( log(2), 'log on constant' );
 
 ok( oct($a), 'oct on variable' );
 ok( oct(), 'oct on nothing' );
-#ok( oct, 'oct with nothing and no parens' );
+ok( oct, 'oct with nothing and no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin oct violations
@@ -593,7 +593,7 @@ ok( oct('077'), 'oct on constant' );
 
 ok( ord($a), 'ord with const arg' );
 ok( ord(), 'ord with no arg' );
-#ok( ord, 'ord no args and no parens' );
+ok( ord, 'ord no args and no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin ord violations
@@ -640,7 +640,7 @@ ok( qr/asdf/, $x, 'qr with extra arg' );
 
 ok( quotemeta($a), 'quotemeta with variable' );
 ok( quotemeta(), 'quotemeta with no parms' );
-#ok( quotemeta, 'quotemeta with no args and no parens' );
+ok( quotemeta, 'quotemeta with no args and no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin quotemeta violations
@@ -657,7 +657,7 @@ ok( quotemeta('asdf'), 'quotemeta on constant' );
 ok( rand(10), 'rand with const' );
 ok( rand(0), 'rand with 0' );
 ok( rand(), 'rand with no args' );
-#ok( rand, 'rand with no args and no parens' );
+ok( rand, 'rand with no args and no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin reverse
@@ -692,13 +692,11 @@ ok( shift == 0 );
 
 #-----------------------------------------------------------------------------
 ## name builtin shift violations
-## failures 4
+## failures 0
 ## cut
 
-ok( shift () );
-ok( shift 1 );
-ok( shift 1, 2 );
-ok( shift ( 1, 2 ) );
+# shift cannot be called on lists, only on arrays. Therefore we can't
+# detect invariant calls to shift.
 
 #-----------------------------------------------------------------------------
 ## name builtin sin
@@ -707,7 +705,7 @@ ok( shift ( 1, 2 ) );
 
 ok( sin($a), 'sin on variable' );
 ok( sin(), 'sin on nothing' );
-#ok( sin, 'sin with nothing and no parens' );
+ok( sin, 'sin with nothing and no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin sin violations
@@ -723,7 +721,7 @@ ok( sin(0) );
 
 ok( sqrt($a), 'sqrt on variable' );
 ok( sqrt(), 'sqrt on nothing' );
-#ok( sqrt, 'sqrt with nothing and no parens' );
+ok( sqrt, 'sqrt with nothing and no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin sqrt violations
@@ -739,7 +737,7 @@ ok( sqrt(1) );
 
 ok( srand($a), 'srand on variable' );
 ok( srand(), 'srand on nothing' );
-#ok( srand, 'srand with nothing and no parens' );
+ok( srand, 'srand with nothing and no parens' );
 
 #-----------------------------------------------------------------------------
 ## name builtin srand violations

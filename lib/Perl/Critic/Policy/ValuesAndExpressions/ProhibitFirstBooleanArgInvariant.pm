@@ -52,11 +52,12 @@ my %CALLS_TO_CHECK = hashify( qw(
     throws_ok Test::Exception::throws_ok
 ) );
 
+
 sub violates {
     my ( $self, $elem, undef ) = @_;
 
     if ( exists $CALLS_TO_CHECK{ $elem->content() } && is_any_call($elem) ) {
-        my @args = parse_arg_list( $elem );
+        my @args = _parse_arg_list( $elem );
 #use Data::Dumper;
 #print Dumper \@args;
 
@@ -64,7 +65,7 @@ sub violates {
         # E.g.: "ok( require filetest, 'required pragma successfully' );"
         # Need to research how/whether to do checking in the non-listref case.
         if ( @args ) {
-            my $first_arg = $args[0];
+            my $first_arg = $args[0];  # can't use first_arg()
             if ( element_is_invariant($first_arg) ) {
                 my $content;
                 if ( ref($first_arg) eq 'ARRAY' ) {
@@ -418,7 +419,7 @@ sub element_is_invariant {
     elsif ( $class eq 'PPI::Token::Word' ) {
         if ( is_any_call($elem) ) {
             if ( $INVARIANT_FUNCTIONS{$elem} ) {
-                my @args = parse_arg_list( $elem );
+                my @args = _parse_arg_list( $elem );
 
                 my $maxargs = $INVARIANT_FUNCTIONS{$elem}->{maxargs};
                 if ( (defined $maxargs && $maxargs == 0) || scalar(@args) == 0 ) {
@@ -434,9 +435,11 @@ sub element_is_invariant {
                 return refaddr( $args[$lastarg]->[-1] );
             }
             elsif ( $POSSIBLE_VARIANT_FUNCTIONS{$elem} ) {
-                my @args = parse_arg_list( $elem );
+                my @args = _parse_arg_list( $elem );
 
                 my $func = $elem->content();
+use Data::Dumper;
+print Dumper [ $func, \@args ];
 
                 # Special handling for stringy eval, which we currently
                 # consider to be variant, even though we could find some
@@ -520,6 +523,15 @@ sub is_any_call {
 }
 
 
+sub _parse_arg_list {
+    my $elem = shift;
+    my $sib  = $elem->snext_sibling();
+    return if !$sib;
+    return if $sib->isa('PPI::Token::Operator');
+    return parse_arg_list( $elem );
+}
+
+
 1;
 
 __END__
@@ -559,7 +571,7 @@ Mike O'Regan
 
 =head1 COPYRIGHT
 
-Copyright (c) 2013 Mike O'Regan.  All rights reserved.
+Copyright (c) 2014 Mike O'Regan.  All rights reserved.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.  The full text of this license
