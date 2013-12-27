@@ -685,7 +685,20 @@ ok( reverse(), 'reverse in list context with no arguments, so no output' );
 ## failures 0
 ## cut
 
+ok( shift );
+ok( shift @a );
+ok( shift @$a );
 ok( shift == 0 );
+
+#-----------------------------------------------------------------------------
+## name builtin shift violations
+## failures 4
+## cut
+
+ok( shift () );
+ok( shift 1 );
+ok( shift 1, 2 );
+ok( shift ( 1, 2 ) );
 
 #-----------------------------------------------------------------------------
 ## name builtin sin
