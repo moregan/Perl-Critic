@@ -404,6 +404,15 @@ sub element_is_invariant {
         if ( $class eq 'PPI::Token::HereDoc' && $elem->content =~ /^<<\s*'/ ) {
             return 1;
         }
+        elsif ( $class eq 'PPI::Token::Regexp::Match' ) {
+            my $sprev = $elem->sprevious_sibling();
+            # If sprev is not there or is not a match operator, then it's
+            # matching against $_, so it's always # variant. Otherwise fall
+            # through.
+            if ( !($sprev && ($sprev eq '=~' || $sprev eq '!~')) ) {
+                return 0;
+            }
+        }
         return !_has_interpolation( $elem );
     }
     elsif ( $class eq 'PPI::Token::Word' ) {
