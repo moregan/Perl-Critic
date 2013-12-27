@@ -114,9 +114,9 @@ my %INVARIANT_TOKENS = hashify(
         PPI::Token::Number::Version
         PPI::Token::Pod
         PPI::Token::Prototype
-        PPI::Token::QuoteLike::Words
         PPI::Token::Quote::Literal
         PPI::Token::Quote::Single
+        PPI::Token::QuoteLike::Words
         PPI::Token::Structure
         PPI::Token::Whitespace
     )
@@ -487,7 +487,8 @@ sub _all_are_invariant {
 }
 
 
-# from ValuesAndExpressions::ProhibitInterpolationOfLiterals
+# From ValuesAndExpressions::ProhibitInterpolationOfLiterals.
+# See also Perl::Critic::Utils::is_ppi_constant_element().
 sub _has_interpolation {
     my $elem = shift;
     return $elem =~ m<
