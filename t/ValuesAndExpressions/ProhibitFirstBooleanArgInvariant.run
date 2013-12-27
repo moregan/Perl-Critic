@@ -120,7 +120,7 @@ HEREDOC_STYLE3
 
 #-----------------------------------------------------------------------------
 ## name heredocs violations
-## failures 3
+## failures 6
 ## cut
 
 ok( <<HEREDOC_STYLE1 );
