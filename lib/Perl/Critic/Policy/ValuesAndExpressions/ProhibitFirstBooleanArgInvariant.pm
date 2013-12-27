@@ -401,6 +401,9 @@ sub element_is_invariant {
         return _all_are_invariant( [ $elem->children() ] );
     }
     elsif ( $POSSIBLE_VARIANT_TOKENS{ $class } ) {
+        if ( $class eq 'PPI::Token::HereDoc' && $elem->content =~ /^<<\s*'/ ) {
+            return 1;
+        }
         return !_has_interpolation( $elem );
     }
     elsif ( $class eq 'PPI::Token::Word' ) {
@@ -491,7 +494,9 @@ sub _all_are_invariant {
 # See also Perl::Critic::Utils::is_ppi_constant_element().
 sub _has_interpolation {
     my $elem = shift;
-    return $elem =~ m<
+
+    my $content = $elem->isa( 'PPI::Token::HereDoc' ) ? join("\n", $elem->heredoc()) : $elem->content();
+    return $content =~ m<
         (?: \A | [^\\] )
         (?: \\{2} )*
         (?: [\$\@] \S+ | \\[tnrfbae0xcNLuLUEQ] )

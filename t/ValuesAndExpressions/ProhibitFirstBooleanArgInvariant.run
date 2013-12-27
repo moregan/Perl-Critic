@@ -126,8 +126,19 @@ HEREDOC_STYLE3
 ok( <<HEREDOC_STYLE1 );
 HEREDOC_STYLE1
 
+ok( <<HEREDOC_STYLE1 );
+no interpolations in this heredoc
+HEREDOC_STYLE1
+
+ok( <<'HEREDOC_STYLE2' );
+no interpolations in this heredoc
+HEREDOC_STYLE2
+
 ok( <<'HEREDOC_STYLE2' );
 HEREDOC_STYLE2
+
+ok( <<"HEREDOC_STYLE3" );
+HEREDOC_STYLE3
 
 ok( <<"HEREDOC_STYLE3" );
 no interpolations in this heredoc
