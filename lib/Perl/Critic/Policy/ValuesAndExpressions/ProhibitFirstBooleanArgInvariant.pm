@@ -66,10 +66,12 @@ sub violates {
         if ( @args ) {
             my $first_arg = $args[0];
             if ( element_is_invariant($first_arg) ) {
+                my $content;
                 if ( ref($first_arg) eq 'ARRAY' ) {
+                    $content = join( ' ', @$first_arg );
                     $first_arg = $first_arg->[0];
                 }
-                return $self->violation( sprintf( $DESC, $first_arg->content(), $elem->content() ), $EXPL, $first_arg );
+                return $self->violation( sprintf( $DESC, $content, $elem->content() ), $EXPL, $first_arg );
             }
         }
     }
