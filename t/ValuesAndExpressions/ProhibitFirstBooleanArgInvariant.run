@@ -1,17 +1,467 @@
-## name dummy
+## name no args
 ## failures 0
 ## cut
 
-1;
+ok();
 
 #-----------------------------------------------------------------------------
-## name dummy
+## name variable
 ## failures 0
 ## cut
 
-1;
+ok( $x };
+ok( @x };
+ok( %x };
+ok( *x };
 
 #-----------------------------------------------------------------------------
+## name dereferenced variable
+## failures 0
+## cut
+
+ok( $$x };
+ok( @$x };
+ok( %$x };
+ok( *$x };
+
+#-----------------------------------------------------------------------------
+## name verbose dereferenced variable
+## failures 0
+## cut
+
+ok( ${ $x } };
+ok( @{ $x } };
+ok( %{ $x } };
+ok( *{ $x } };
+
+#-----------------------------------------------------------------------------
+## name require module
+## failures 0
+## cut
+
+ok( require filetest );
+ok( require filetest, 'required pragma successfully' );
+
+#-----------------------------------------------------------------------------
+## name string interpolation
+## failures 0
+## cut
+
+ok( "$a" );
+ok( "$$a" );
+ok( "$a$b" );
+ok( "$a->{x}" );
+
+#-----------------------------------------------------------------------------
+## name variable operated upon
+## failures 0
+## cut
+
+ok( 1+$n );
+ok( $n+1 );
+ok( 1 =~ /$a/ );
+ok( 1 !~ /$a/ );
+
+##-----------------------------------------------------------------------------
+### name carp-assert-affirm
+### failures 0
+### cut
+#
+#affirm { $a; } 'affirm with constant contents sub';
+
+#-----------------------------------------------------------------------------
+## name heredocs
+## failures 0
+## cut
+
+ok( <<HEREDOC_STYLE1 );
+$interpolation
+HEREDOC_STYLE1
+
+ok( <<"HEREDOC_STYLE3" );
+$interpolation
+HEREDOC_STYLE3
+
+#-----------------------------------------------------------------------------
+## name heredocs violations
+## failures 3
+## cut
+
+ok( <<HEREDOC_STYLE1 );
+HEREDOC_STYLE1
+
+ok( <<'HEREDOC_STYLE2' );
+HEREDOC_STYLE2
+
+ok( <<"HEREDOC_STYLE3" );
+no interpolations in this heredoc
+HEREDOC_STYLE3
+
+#-----------------------------------------------------------------------------
+## name function calls
+## failures 0
+## cut
+
+ok( my_func );
+ok( my_func() );
+ok( my_func('') );
+ok( my_func '' );
+ok( my_func($a) );
+ok( my_func $a );
+ok( '' eq my_func() );
+ok( my_func(<<'HEREDOC') );
+HEREDOC
+ok('' eq my_func(<<HEREDOC) );
+HEREDOC
+
+#-----------------------------------------------------------------------------
+## name class method call
+## failures 0
+## cut
+
+ok( SOAP::Lite->autodispatched );
+ok( SOAP::Lite->autodispatched() );
+ok( CLS->$b );
+ok( TW::Interface::TitleListCounts->can('asdf') );
+ok( 'TW::Interface::TitleListCounts'->can('asdf') );
+ok( $a->my_method );
+ok( $a->my_method() );
+ok( $a->$b() );
+
+#-----------------------------------------------------------------------------
+## name operator filetest
+## failures 0
+## cut
+
+ok(-x '/some/path', "-x against nonempty literal");
+ok(-x '', "-x against empty single quoted literal");
+ok(-x "", "-x against empty double quoted literal");
+ok(-x undef, "-x against undef");
+ok(-x $a, "-x against variable");
+# TODO: stacked filetest operators
+
+#-----------------------------------------------------------------------------
+## name operator readline
+## failures 0
+## cut
+
+ok( <>, 'readline' );
+ok( <$fh>, 'readline with fh' );
+
+#-----------------------------------------------------------------------------
+## name operator backticks
+## failures 0
+## cut
+
+ok( ``, 'backticks' );
+ok( qx//, 'qx' );
+
+#-----------------------------------------------------------------------------
+## name match
+## failures 0
+## cut
+
+ok( /ABC/ );
+ok( !/ABC/ );
+
+#-----------------------------------------------------------------------------
+## name eval
+## failures 0
+## cut
+
+ok( eval "1;", 'simple constant stringy eval' );
+ok( eval "$a", 'interpolated stringy eval' );
+ok( eval $a.$b, 'expression yielding stringy eval' );
+ok( eval(), 'stringy eval on $_' );
+ok( eval { $a }, 'block eval with variable' );
+ok( eval { Class->method() }, 'block eval with method call' );
+
+#-----------------------------------------------------------------------------
+## name translate
+## failures 0
+## cut
+
+ok( $a =~ tr/a/b/, 'variant left-hand side to tr///' );
+ok( $a =~ y/a/b/, 'variant left-hand side to y///' );
+
+#-----------------------------------------------------------------------------
+## name grep
+## failures 0
+## cut
+
+ok( grep { 1; } ( 1, 2, 3 ), "constant grep" );
+
+#-----------------------------------------------------------------------------
+## name builtin join
+## failures 0
+## cut
+#
+ok( join( '', @a ) );
+ok( join( '', 1, 2, $a ) );
+ok( join( whatever(), (1, 2, 3) ) );
+
+#-----------------------------------------------------------------------------
+## name builtin lc
+## failures 0
+## cut
+#
+ok( lc )
+ok( lc() )
+ok( lc($a) )
+
+#-----------------------------------------------------------------------------
+## name builtin lcfirst
+## failures 0
+## cut
+#
+ok( lcfirst );
+ok( lcfirst() );
+ok( lcfirst($a) );
+
+#-----------------------------------------------------------------------------
+## name builtin uc
+## failures 0
+## cut
+#
+ok( uc )
+ok( uc() )
+ok( uc($a) )
+
+#-----------------------------------------------------------------------------
+## name builtin ucfirst
+## failures 0
+## cut
+#
+ok( ucfirst );
+ok( ucfirst() );
+ok( ucfirst($a) );
+
+#-----------------------------------------------------------------------------
+## name builtin keys
+## failures 0
+## cut
+
+ok( keys %hash );
+ok( keys %$hash );
+
+#-----------------------------------------------------------------------------
+## name builtin scalar
+## failures 0
+## cut
+
+ok( scalar ( 1, $a, 3 ) );
+ok( scalar @{ [ 1, 2, time() ] } );
+
+#-----------------------------------------------------------------------------
+## name builtin caller
+## failures 0
+## cut
+
+ok( caller );
+ok( caller() );
+ok( caller(1) );
+
+#-----------------------------------------------------------------------------
+## name builtin alarm
+## failures 0
+## cut
+
+ok( alarm($a), 'alarm with variable' );
+ok( alarm(), 'alarm with no args' );
+ok( alarm, 'alarm with no args or parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin chomp
+## failures 0
+## cut
+
+ok( chomp($a), 'chomp with variable' );
+ok( chomp("$a"), 'chomp with interpolated variable' );
+ok( chomp(), 'chomp with no params' );
+#ok( chomp, 'chomp with no parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin chop
+## failures 0
+## cut
+
+ok( chop($a), 'chop with variable' );
+ok( chop("$a"), 'chop with interpolated variable' );
+ok( chop( ($a, $b) ), 'chop with variables in array' );
+ok( chop(), 'chop with no params' );
+#ok( chop, 'chop with no parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin chr
+## failures 0
+## cut
+
+ok( chr($a), 'chr with variable' );
+ok( chr(), 'chr with no args' );
+
+#-----------------------------------------------------------------------------
+## name builtin cos
+## failures 0
+## cut
+
+ok( cos($a), 'cos with variable' );
+ok( cos(), 'cos with no parms' );
+
+#-----------------------------------------------------------------------------
+## name builtin defined
+## failures 0
+## cut
+
+ok( defined($a), 'defined with variable' );
+ok( defined(), 'defined with no parms' );
+
+#-----------------------------------------------------------------------------
+## name builtin exp
+## failures 0
+## cut
+
+ok( exp($a), 'exp with no parameters' );
+ok( exp(), 'exp with no parameters' );
+#ok( exp, 'exp with no parameters' );
+
+#-----------------------------------------------------------------------------
+## name builtin hex
+## failures 0
+## cut
+
+ok( hex($a), 'hex with no parameters' );
+ok( hex(), 'hex with no parameters' );
+#ok( hex, 'hex with no parameters' );
+
+#-----------------------------------------------------------------------------
+## name builtin int
+## failures 0
+## cut
+
+ok( int($a), 'int with no parameters' );
+ok( int(), 'int with no parameters' );
+#ok( int, 'int with no parameters' );
+
+#-----------------------------------------------------------------------------
+## name builtin length
+## failures 0
+## cut
+
+ok( length($a), 'length on variable' );
+ok( length(), 'length on nothing' );
+#ok( length, 'length with nothing and no parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin log
+## failures 0
+## cut
+
+ok( log($a), 'log on variable' );
+ok( log(), 'log on nothing' );
+#ok( log, 'literal that is not an argument to log' );
+#
+#-----------------------------------------------------------------------------
+## name builtin oct
+## failures 0
+## cut
+
+ok( oct($a), 'oct on variable' );
+ok( oct(), 'oct on nothing' );
+#ok( oct, 'oct with nothing and no parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin ord
+## failures 0
+## cut
+
+ok( ord($a), 'ord with const arg' );
+ok( ord(), 'ord with no arg' );
+#ok( ord, 'ord no args and no parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin pos
+## failures 0
+## cut
+
+ok( pos($a), 'pos with variable' );
+ok( pos(), 'pos with no parms' );
+
+#-----------------------------------------------------------------------------
+## name builtin prototype
+## failures 0
+## cut
+
+ok( prototype( \&mysub ), 'prototype on func reference' );
+ok( prototype( 'mysub' ), 'prototype on func name' );
+
+#-----------------------------------------------------------------------------
+## name builtin qr
+## failures 0
+## cut
+
+ok( qr/$x/, 'qr' );
+
+#-----------------------------------------------------------------------------
+## name builtin quotemeta
+## failures 0
+## cut
+
+ok( quotemeta($a), 'quotemeta with variable' );
+ok( quotemeta(), 'quotemeta with no parms' );
+#ok( quotemeta, 'quotemeta with no args and no parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin rand
+## failures 0
+## cut
+
+ok( rand(10), 'rand with const' );
+ok( rand(0), 'rand with 0' );
+ok( rand(), 'rand with no args' );
+#ok( rand, 'rand with no args and no parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin reverse
+## failures 0
+## cut
+
+ok( reverse( $a, 2, 3 ), 'reverse with variables in list' );
+ok( reverse(@a), 'reverse of an array' );
+ok( scalar reverse(), 'reverse in scalar context with no arguments, so reverses on $_' );
+
+#-----------------------------------------------------------------------------
+## name builtin sin
+## failures 0
+## cut
+
+ok( sin($a), 'sin on variable' );
+ok( sin(), 'sin on nothing' );
+#ok( sin, 'sin with nothing and no parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin sqrt
+## failures 0
+## cut
+
+ok( sqrt($a), 'sqrt on variable' );
+ok( sqrt(), 'sqrt on nothing' );
+#ok( sqrt, 'sqrt with nothing and no parens' );
+
+#-----------------------------------------------------------------------------
+## name builtin srand
+## failures 0
+## cut
+
+ok( srand($a), 'srand on variable' );
+ok( srand(), 'srand on nothing' );
+#ok( srand, 'srand with nothing and no parens' );
+
+#-----------------------------------------------------------------------------
+## name misc
+## failures 0
+## cut
+#
+$self->has_todo ? 1 : $self->ok !~ /not/;
 
 # Local Variables:
 #   mode: cperl
