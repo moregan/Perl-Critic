@@ -50,16 +50,12 @@ ok( $$x };
 ok( @$x };
 ok( %$x };
 ok( *$x };
-
-#-----------------------------------------------------------------------------
-## name verbose dereferenced variable
-## failures 0
-## cut
-
+ok( &$x };
 ok( ${ $x } };
 ok( @{ $x } };
 ok( %{ $x } };
 ok( *{ $x } };
+ok( &{ $x } };
 
 #-----------------------------------------------------------------------------
 ## name require module
@@ -690,11 +686,6 @@ ok( shift @a );
 ok( shift @$a );
 ok( shift == 0 );
 
-#-----------------------------------------------------------------------------
-## name builtin shift violations
-## failures 0
-## cut
-
 # shift cannot be called on lists, only on arrays. Therefore we can't
 # detect invariant calls to shift.
 
@@ -759,15 +750,16 @@ ok( study $x, $y, 'study w/ extra arg' );
 
 #-----------------------------------------------------------------------------
 ## name builtin undef violations
-## failures 6
+## failures 7
 ## cut
 
 ok( undef, 'undef' );
 ok( undef( $x ), 'undef' );
 ok( undef $x, 'undef no parens' );
-ok( undef, %x, 'undef on hash' );
-ok( undef, @x, 'undef on array' );
-ok( undef, *x, 'undef on typeglob' );
+ok( undef %x, 'undef on hash' );
+ok( undef @x, 'undef on array' );
+ok( undef qr/./, 'undef on regex' );
+ok( undef *x, 'undef on typeglob' );
 
 
 #-----------------------------------------------------------------------------
