@@ -225,6 +225,8 @@ my %VARIANT_OPERATORS = hashify(
 
 # TODO: study returns undef/''(?) when the arg is invalid or empty, 1 when valid and non-empty.
 
+# TODO: support 5.14+ allowing a naked listref with pop, etc.?
+
 # 'q' is not here because it's covered by PPI::Token::Quote::Single.
 # 'qq' is not here because it's covered by PPI::Token::Quote::Double.
 # 'qw' is not here because it's covered by PPI::Token::Quote::Words.
