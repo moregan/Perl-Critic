@@ -681,6 +681,13 @@ ok( scalar reverse( "abc" ), 'reverse in scalar context with constant string' );
 ok( reverse(), 'reverse in list context with no arguments, so no output' );
 
 #-----------------------------------------------------------------------------
+## name builtin shift
+## failures 0
+## cut
+
+ok( shift == 0 );
+
+#-----------------------------------------------------------------------------
 ## name builtin sin
 ## failures 0
 ## cut
