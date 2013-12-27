@@ -215,8 +215,6 @@ my %VARIANT_OPERATORS = hashify(
 
 # TODO: what to do with 'import'?  Is there any spec out there?
 
-# TODO: handle match operators taking implicit $_
-
 # TODO: handle the fact that ref( \@{ $listref } ) is invariant.
 # Also detect ref( sub { $a } ), ref( \my $var ), etc.
 
