@@ -97,8 +97,6 @@ my %CHECK_ALL_CHILDREN_TOKENS = hashify(
     )
 );
 
-# TODO: PPI::Statement::Variable
-
 # Tokens that are always invariant
 my %INVARIANT_TOKENS = hashify(
     qw(
@@ -142,6 +140,7 @@ my %VARIANT_TOKENS = hashify(
 # Tokens that are variant depending on their content/arguments.
 my %POSSIBLE_VARIANT_TOKENS = hashify(
     qw(
+        PPI::Statement::Variable
         PPI::Token::HereDoc
         PPI::Token::Quote::Double
         PPI::Token::Quote::Interpolate
@@ -150,6 +149,8 @@ my %POSSIBLE_VARIANT_TOKENS = hashify(
         PPI::Token::Regexp::Transliterate
     )
 );
+
+# TODO: PPI::Statement::Variable
 
 # TODO: is the \ operator always-variant? i.e.: do we care about the
 # address is returns or the contents of what it points to?
@@ -379,11 +380,11 @@ sub element_is_invariant {
     my $elem = shift;
 
     my $class = ref $elem;
-#print
-#    "$class ",
-#    ($class eq 'ARRAY' ? '' : $elem->content()),
-#    "\n"
-#;
+print
+    "$class ",
+    ($class eq 'ARRAY' ? '' : $elem->content()),
+    "\n"
+;
 
     if ( $INVARIANT_TOKENS{ $class } ) {
         return 1;
@@ -415,6 +416,22 @@ sub element_is_invariant {
             if ( !($sprev && ($sprev eq '=~' || $sprev eq '!~')) ) {
                 return 0;
             }
+        }
+        elsif ( $class eq 'PPI::Statement::Variable' ) {
+            # variable statements consist of a word or list,
+            # an operator, and then initializers. The latter two
+            # are optional.  Only the initializers can be variant.
+            die if ref $elem->child(0) ne 'PPI::Token::Word';
+            my @children = $elem->children();
+            while ( @children ) {
+                my $token = shift @children;
+                if ( $token->isa( 'PPI::Token::Operator' ) ) {
+                    # If children are invariant, cause all the tokens
+                    # associated with the variable declaration to be skipped.
+                    return _all_are_invariant( \@children ) ? refaddr($children[-1]) : 0;
+                }
+            }
+            return 1;
         }
         return !_has_interpolation( $elem );
     }
@@ -523,12 +540,27 @@ sub is_any_call {
 }
 
 
+my %_DECL_WORDS = hashify( qw( my local our state ) );
 sub _parse_arg_list {
     my $elem = shift;
+
     my $sib  = $elem->snext_sibling();
     return if !$sib;
     return if $sib->isa('PPI::Token::Operator');
-    return parse_arg_list( $elem );
+
+    my @args = parse_arg_list( $elem );
+use Data::Dumper;
+    foreach my $arg ( @args ) {
+        my $first_token = ref($arg) eq 'ARRAY' ? $arg->[0] : $arg;
+        if ( $first_token->isa('PPI::Token::Word') && $_DECL_WORDS{$first_token} ) {
+            my $prev = $first_token->parent();
+            if ( $prev && $prev->isa('PPI::Statement::Variable') ) {
+                unshift @$arg, $prev;
+            }
+        }
+    }
+print STDERR '# ' . Dumper( \@args );
+    return @args;
 }
 
 

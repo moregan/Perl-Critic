@@ -172,10 +172,18 @@ ok( $a->my_method() );
 ok( $a->$b() );
 
 #-----------------------------------------------------------------------------
-## name declarations violations
-## failures 2
+## name declarations
+## failures 0
 ## cut
 
+ok( my $x = $a, 'asdf' );
+
+#-----------------------------------------------------------------------------
+## name declarations violations
+## failures 3
+## cut
+
+ok( my $x, 'asdf' );
 ok( my $x = 1, 'asdf' );
 ok( my ($x, $y) = (1, 9), 'asdf' );
 
